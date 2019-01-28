@@ -18,7 +18,7 @@ public class ImageRepository {
     //The method receives the Image object to be persisted in the database
     //Creates an instance of EntityManager
     //Starts a transaction
-    //The transaction is committed if it is successful
+    //The transactigetImageByTitle()on is committed if it is successful
     //The transaction is rolled back in case of unsuccessful transaction
     public Image uploadImage(Image newImage) {
 

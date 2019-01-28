@@ -13,12 +13,12 @@
 
     <!-- You need to print the error message if the non owner of the image is trying to edit or delete the image-->
     <div class="dtc v-mid w-75 tr">
-        <a th:href="@{/editImage(imageId=${image.id},userId = ${image.user.id},title = ${image.title})}">Edit</a>
+        <a th:href="@{/editImage(imageId=${image.id})}">Edit</a>
         <!-- Show the edit error if the non owner of the image is trying to edit the image-->
         <!--Uncomment the below code to show the error if the non owner of the image is trying to edit the image-->
         <div th:if="${editError}">Only the owner of the image can edit the image</div>
         <div><br></div>
-        <form th:action="@{/deleteImage(imageId=${image.id},userId = ${image.user.id},title = ${image.title})}" th:method="delete">
+        <form th:action="@{/deleteImage(imageId=${image.id})}" th:method="delete">
             <input type="submit" value="Delete"/>
         </form>
         <!-- Show the delete error if the non owner of the image is trying to delete the image-->
@@ -69,7 +69,7 @@
         </form>
 
         <!-- A piece of code displaying all the comments to a particular image-->
-        <<div class="comments mt5">
+        <div class="comments mt5">
             <article class="ba b&#45;&#45;black-10 mv4" th:each="comment : ${comments}">
                 <h1 class="f4 bg-light-gray black-80 mv0 pv2 ph3" th:text="${comment.user.username} + ' says'">Title of
                     card</h1>

@@ -26,14 +26,21 @@ public class Comment {
     private Date createdDate;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_comment_id")
     private User user;
      //here we are mapping the image as a join column
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;
 
+    public Comment(){}
+
+    public Comment(Integer id, String text, Date createdDate) {
+        this.id = id;
+        this.text = text;
+        this.createdDate = createdDate;
+    }
 
     public Integer getId() {
         return id;

@@ -42,7 +42,7 @@ public class ImageController {
     }
 
     //This method is called when the details of the specific image with corresponding title are to be displayed
-    //The logic is to get the image from the databse with corresponding title. After getting the image from the database the details are shown
+    //The logic is to get the image from the database with corresponding title. After getting the image from the database the details are shown
     //First receive the dynamic parameter in the incoming request URL in a string variable 'title' and also the Model type object
     //Call the getImageByTitle() method in the business logic to fetch all the details of that image
     //Add the image in the Model type object with 'image' as the key
@@ -52,10 +52,9 @@ public class ImageController {
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
     @RequestMapping("/images/{id}/{title}")
-    public String showImage(@PathVariable("title") String title, @PathVariable("id") Integer id, Model model) {
+    public String showImage(@PathVariable("id") Integer id, Model model) {
 
-
-        Image image = imageService.getImageByTitle(title ,id);
+        Image image = imageService.getImage(id);
         model.addAttribute("comments",image.getComment());
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
@@ -105,16 +104,16 @@ public class ImageController {
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId,@RequestParam("title") String title,@RequestParam("userId") Integer userId ,HttpSession session ,Model model) {
+    public String editImage(@RequestParam("imageId") Integer imageId,HttpSession session ,Model model) {
          //title and userid is fetched with the help of requestparameter
         //here we are creating the logged in user object with the help of session
 
         //finally the view is returned on the basis of logged in user and image owner(userId)
         User loggeduser = (User) session.getAttribute("loggeduser");
+        Image image = imageService.getImage(imageId);
+        String tags = convertTagsToString(image.getTags());
 
-        if(userId != loggeduser.getId()){
-
-            Image image = imageService.getImageByTitle(title ,imageId);
+        if(image.getUser().getId() != loggeduser.getId()){
 
             model.addAttribute("editError", true);
             model.addAttribute("image", image);
@@ -124,9 +123,7 @@ public class ImageController {
         }
 
         else {
-            Image image = imageService.getImage(imageId);
 
-            String tags = convertTagsToString(image.getTags());
             model.addAttribute("image", image);
             model.addAttribute("tags", tags);
             return "images/edit";
@@ -173,18 +170,19 @@ public class ImageController {
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId,@RequestParam("title") String title,@RequestParam("userId") Integer userId ,HttpSession session ,Model model) {
-
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId,HttpSession session ,Model model) {
+        //String error = "Only the owner of the image can delete the image";
         //Getting the logged in user with the help of session variables
         User loggeduser = (User) session.getAttribute("loggeduser");
+        Image image = imageService.getImage(imageId);
+        String tags = convertTagsToString(image.getTags());
         //Deleting the post if the user belongs to the owner of the image
-        if(userId != loggeduser.getId()){
-
-            Image image = imageService.getImageByTitle(title ,imageId);
+        if(image.getUser().getId() != loggeduser.getId()){
 
             model.addAttribute("deleteError", true);
             model.addAttribute("image", image);
-            model.addAttribute("tags", image.getTags());
+            //model.addAttribute("tags", image.getTags());
+            model.addAttribute("tags", tags);
 
             return "images/image";
         }

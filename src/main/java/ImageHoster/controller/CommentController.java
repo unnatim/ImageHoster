@@ -26,21 +26,23 @@ public class CommentController {
     //this method is implemented to make new comment and also to redirect the user to the same image page
 
     @RequestMapping(value = "/image/{id}/{title}/comments" ,  method = RequestMethod.POST)
-    public String uploadComment(@RequestParam(name = "comment") String comment, @PathVariable("title") String title, @PathVariable("id") Integer id, Comment newcomment , HttpSession session, Model model) {
+    public String createComment(@PathVariable("id") Integer id, @RequestParam("comment") String imageComment, HttpSession session){
         User user = (User) session.getAttribute("loggeduser");
          //setting the comment model class
-        Image image = imageService.getImageByTitle(title ,id);
-        newcomment.setUser(user);
-        newcomment.setImage(image);
-        newcomment.setCreatedDate(new Date());
-        newcomment.setText(comment);
+        Image image = imageService.getImage(id);
+        Comment comment = new Comment();
+        comment.setUser(user);
+        comment.setImage(image);
+        comment.setCreatedDate(new Date());
+        comment.setText(imageComment);
          //registering the new comment in the database with help of comment service
-        commentService.postComment(newcomment);
+        commentService.addComment(comment);
 
         //returning the same image page after post request
-        model.addAttribute("comments",image.getComment());
-        model.addAttribute("image", image);
-        model.addAttribute("tags", image.getTags());
-        return "images/image";
+        return "redirect:/images/" + image.getId() + "/" + image.getTitle();
+        //model.addAttribute("comments",image.getComment());
+        //model.addAttribute("image", image);
+        //model.addAttribute("tags", image.getTags());
+        //return "images/image";
     }
 }
